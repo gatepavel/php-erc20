@@ -18,7 +18,7 @@ abstract class StandardERC20Token extends ERC20
     protected $contractAddress;
     protected $decimals;
     protected $gasLimits = [
-        'approve'      => 50000,
+        'approve'      => 100000,
         'transfer'     => 50000,
         'transferFrom' => 50000,
         'default'      => 50000,
@@ -68,6 +68,8 @@ abstract class StandardERC20Token extends ERC20
      */
     public function transfer(string $from, string $to, float $amount)
     {
+        bcscale(0);
+
         $amount   = Number::scaleUp($amount, $this->decimals());
         $data     = $this->buildTransferData($to, $amount);
         $nonce    = Number::toHex($this->getEth()
@@ -98,6 +100,8 @@ abstract class StandardERC20Token extends ERC20
 
     public function approve(string $ownerAddress, string $spenderAddress, string $amount)
     {
+        bcscale(0);
+
         $amount   = Number::scaleUp($amount, $this->decimals());
         $data     = $this->buildApproveData($spenderAddress, $amount);
         $nonce    = Number::toHex($this->getEth()
@@ -127,6 +131,8 @@ abstract class StandardERC20Token extends ERC20
 
     public function allowance(string $ownerAddress, string $spenderAddress)
     {
+        bcscale(0);
+
         return Number::scaleDown($this->call('allowance', [$ownerAddress, $spenderAddress])[0]->toString(), $this->decimals());
     }
 
@@ -139,6 +145,7 @@ abstract class StandardERC20Token extends ERC20
      */
     public function transferFrom(string $spender, string $from, string $to, float $amount)
     {
+        bcscale(0);
         $amount   = Number::scaleUp($amount, $this->decimals());
         $data     = $this->buildTransferFromData($from, $to, $amount);
         $nonce    = Number::toHex($this->getEth()
